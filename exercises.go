@@ -26,10 +26,6 @@ func main() {
 }
 
 func CBCDecrypter(keyStr, cipherStr string) {
-	// key, _ := hex.DecodeString("140b41b22a29beb4061bda66b6747e14")
-	// ciphertext, _ := hex.DecodeString("4ca00ff4c898d61e1edbf1800618fb2828a226d160dad07883d04e008a7897ee" +
-	// 	"2e4b7465d5290d0c0e6c6822236e1daafb94ffe0c5da05d9476be028ad7c1d81")
-
 	key, _ := hex.DecodeString(keyStr)
 	ciphertext, _ := hex.DecodeString(cipherStr)
 	block, err := aes.NewCipher(key)
@@ -37,8 +33,7 @@ func CBCDecrypter(keyStr, cipherStr string) {
 		panic(err)
 	}
 
-	// The IV needs to be unique, but not secure. Therefore it's common to
-	// include it at the beginning of the ciphertext.
+	// The IV is at the beginning of the ciphertext.
 	if len(ciphertext) < aes.BlockSize {
 		panic("ciphertext too short")
 	}
@@ -55,7 +50,7 @@ func CBCDecrypter(keyStr, cipherStr string) {
 	// CryptBlocks can work in-place if the two arguments are the same.
 	mode.CryptBlocks(ciphertext, ciphertext)
 
-	fmt.Printf("Answer=%d %s\n", len(ciphertext), ciphertext)
+	fmt.Printf("Answer=%d %#q\n", len(ciphertext), ciphertext)
 	pad := int(ciphertext[len(ciphertext)-1])
 	fmt.Printf("pad=%d\n", pad)
 	fmt.Printf("Answer=%d %#q\n", len(ciphertext[:len(ciphertext)-pad]), ciphertext[:len(ciphertext)-pad])
@@ -63,16 +58,17 @@ func CBCDecrypter(keyStr, cipherStr string) {
 		p := int(ciphertext[len(ciphertext)-1-i])
 		if p != pad {
 			fmt.Printf("Bad pad. pad=%d p=%d i=%d\n", pad, p, i)
+			panic("Bad pad 1")
 		}
 	}
 	p := int(ciphertext[len(ciphertext)-1-pad])
 	if p == pad {
 		fmt.Printf("Bad pad. pad=%d p=%d i=%d\n", pad, p, pad)
+		panic("Bad pad 2")
 	}
 }
 
 func CTRDecrypter(keyStr, cipherStr string) {
-
 	key, _ := hex.DecodeString(keyStr)
 	ciphertext, _ := hex.DecodeString(cipherStr)
 	block, err := aes.NewCipher(key)
@@ -80,8 +76,7 @@ func CTRDecrypter(keyStr, cipherStr string) {
 		panic(err)
 	}
 
-	// The IV needs to be unique, but not secure. Therefore it's common to
-	// include it at the beginning of the ciphertext.
+	// The IV is at the beginning of the ciphertext.
 	if len(ciphertext) < aes.BlockSize {
 		panic("ciphertext too short")
 	}
@@ -93,17 +88,4 @@ func CTRDecrypter(keyStr, cipherStr string) {
 	stream.XORKeyStream(plaintext, ciphertext)
 
 	fmt.Printf("Answer=%d %#q\n", len(plaintext), plaintext)
-	// pad := int(plaintext[len(plaintext)-1])
-	// fmt.Printf("pad=%d\n", pad)
-	// fmt.Printf("Answer=%d %#q\n", len(plaintext[:len(plaintext)-pad]), plaintext[:len(plaintext)-pad])
-	// for i := 0; i < pad; i++ {
-	// 	p := int(plaintext[len(plaintext)-1-i])
-	// 	if p != pad {
-	// 		fmt.Printf("Bad pad. pad=%d p=%d i=%d\n", pad, p, i)
-	// 	}
-	// }
-	// p := int(plaintext[len(plaintext)-1-pad])
-	// if p == pad {
-	// 	fmt.Printf("Bad pad. pad=%d p=%d i=%d\n", pad, p, pad)
-	// }
 }
