@@ -59,7 +59,7 @@ func main() {
 	x := solve(p, g, h, B)
 	h1 := bigExp(g, i2b(x), p)
 	fmt.Printf("x=%d\n", x)
-	fmt.Printf("%d^%d (mod %d) = %d\n", g.Int64(), x, p.Int64(), h1.Int64())
+	fmt.Printf("%s^%d (mod %s) = %s\n", g.String(), x, p.String(), h1.String())
 	if h.String() != h1.String() {
 		panic("Wrong answer")
 	}
@@ -107,7 +107,7 @@ func solve(p, g, h *big.Int, B int) int {
 			x := x0*B + x1
 			fmt.Printf("x0=0x%X\n", x0)
 			fmt.Printf("x1=0x%X\n", x1)
-			fmt.Printf("x =0x%X\n", x)
+			fmt.Printf("x =0x%X=%d\n", x, x)
 			fmt.Printf("v =%s\n", rhs)
 			return x
 		}
